@@ -1,7 +1,7 @@
 class ErrorHandler {
-  async handleError(err) {
+  static async handleError(err) {
     if (err.isOperational) return;
-    console.log(err)
+    console.log(err);
   }
 }
 

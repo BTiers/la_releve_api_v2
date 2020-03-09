@@ -1,11 +1,9 @@
 import Express from 'express';
-import Validator from './user.validation.js';
-import Controller from './user.controller.js';
+
+import UserValidation from './user.validation';
+import UserController from './user.controller';
 
 const router = Express.Router();
-
-const UserValidation = new Validator();
-const UserController = new Controller();
 
 /* GET */
 

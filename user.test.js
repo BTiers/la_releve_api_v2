@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+// Disabled for test file only
 import request from 'supertest';
 import server from './server';
 
@@ -24,7 +26,8 @@ describe('All CRUD enpoints', () => {
         email: 'florent-capocci@la-releve.com',
         last_school: '42',
         study_level: 'BAC +3',
-      })
+        slug: 'florent-capocci',
+      }),
     );
   });
 
@@ -45,13 +48,13 @@ describe('All CRUD enpoints', () => {
         code: 'validation',
         httpCode: 400,
         details: ['"first_name" is required'],
-      })
+      }),
     );
   });
 
   /* User PUT updates */
 
-  it('should update the new user', async () => {
+  it('should PUT update the new user', async () => {
     const beforeUpdate = await request(server)
       .get('/api/v1/users')
       .send({});
@@ -71,7 +74,7 @@ describe('All CRUD enpoints', () => {
     const res = await request(server)
       .put(`/api/v1/users/${id}`)
       .send(updatePayload);
-    
+
     expect(res.statusCode).toEqual(204);
     expect(res.body).toEqual(expect.objectContaining({}));
 
@@ -86,11 +89,12 @@ describe('All CRUD enpoints', () => {
       email: 'antoine-piche@la-releve.com',
       last_school: 'Nesaispas',
       study_level: 'BAC +5',
-      id
+      slug: 'antoine-piche',
+      id,
     }));
   });
 
-  it('should fail updating the new user', async () => {
+  it('should fail PUT updating the new user', async () => {
     const beforeUpdate = await request(server)
       .get('/api/v1/users')
       .send({});
@@ -108,7 +112,7 @@ describe('All CRUD enpoints', () => {
     const res = await request(server)
       .put(`/api/v1/users/${id}`)
       .send(updatePayload);
-    
+
     expect(res.statusCode).toEqual(400);
     expect(res.body).toEqual(expect.objectContaining({
       code: 'validation',
@@ -116,7 +120,42 @@ describe('All CRUD enpoints', () => {
         '"first_name" is required',
         '"last_name" is required',
       ],
-      httpCode: 400
+      httpCode: 400,
+    }));
+  });
+
+  /* User PATCH updates */
+
+  it('should PATCH update the new user', async () => {
+    const beforeUpdate = await request(server)
+      .get('/api/v1/users')
+      .send({});
+
+    expect(beforeUpdate.statusCode).toEqual(200);
+
+    const { id } = beforeUpdate.body[0];
+    const updatePayload = {
+      first_name: 'Baptiste',
+      last_name: 'Tiers',
+    };
+
+    const res = await request(server)
+      .patch(`/api/v1/users/${id}`)
+      .send(updatePayload);
+
+    expect(res.statusCode).toEqual(204);
+    expect(res.body).toEqual(expect.objectContaining({}));
+
+    const afterUpdate = await request(server)
+      .get(`/api/v1/users/${id}`)
+      .send({});
+
+    expect(afterUpdate.statusCode).toEqual(200);
+    expect(afterUpdate.body).toEqual(expect.objectContaining({
+      ...beforeUpdate.body[0],
+      slug: 'baptiste-tiers',
+      first_name: 'Baptiste',
+      last_name: 'Tiers',
     }));
   });
 });

@@ -1,27 +1,18 @@
-import UserDAL from './user.dal.js';
+import UserDAL from './user.dal';
 
 class UserController {
   constructor() {
-    if (!!UserController.instance) return UserController.instance;
-
-    this._DAL = new UserDAL();
-
-    this.getOne = this.getOne.bind(this);
-    this.getAll = this.getAll.bind(this);
-    this.post = this.post.bind(this);
-    this.put = this.put.bind(this);
-    this.patch = this.patch.bind(this);
-    this.delete = this.delete.bind(this);
+    if (UserController.instance) return UserController.instance;
 
     UserController.instance = this;
     return this;
   }
 
-  async getOne(req, res, next) {
+  static async getOne(req, res, next) {
     const { id } = req.params;
 
     try {
-      const user = await this._DAL.getOne(id);
+      const user = await UserDAL.getOne(id);
 
       res.status(200).json(user);
     } catch (err) {
@@ -29,9 +20,9 @@ class UserController {
     }
   }
 
-  async getAll(_, res, next) {
+  static async getAll(_, res, next) {
     try {
-      const users = await this._DAL.getAll();
+      const users = await UserDAL.getAll();
 
       res.status(200).json(users);
     } catch (err) {
@@ -39,11 +30,11 @@ class UserController {
     }
   }
 
-  async post(req, res, next) {
+  static async post(req, res, next) {
     const { body } = req;
 
     try {
-      const user = await this._DAL.create(body);
+      const user = await UserDAL.create(body);
 
       res.status(201).json(user);
     } catch (err) {
@@ -51,12 +42,12 @@ class UserController {
     }
   }
 
-  async put(req, res, next) {
+  static async put(req, res, next) {
     const { id } = req.params;
     const { body } = req;
 
     try {
-      await this._DAL.update(id, body);
+      await UserDAL.update(id, body);
 
       res.status(204).json({});
     } catch (err) {
@@ -64,12 +55,12 @@ class UserController {
     }
   }
 
-  async patch(req, res, next) {
+  static async patch(req, res, next) {
     const { id } = req.params;
     const { body } = req;
 
     try {
-      await this._DAL.update(id, body);
+      await UserDAL.update(id, body);
 
       res.status(204).json({});
     } catch (err) {
@@ -77,11 +68,11 @@ class UserController {
     }
   }
 
-  async delete(req, res, next) {
+  static async delete(req, res, next) {
     const { id } = req.params;
 
     try {
-      await this._DAL.delete(id);
+      await UserDAL.delete(id);
 
       res.status(204).json({});
     } catch (err) {

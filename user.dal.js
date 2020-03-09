@@ -1,9 +1,9 @@
-import UserModel from './user.model.js';
-import APIError from './APIError.js';
+import UserModel from './user.model';
+import APIError from './APIError';
 
 class UserDAL {
   constructor() {
-    if (!!UserDAL.instance) {
+    if (UserDAL.instance) {
       return UserDAL.instance;
     }
 
@@ -11,45 +11,47 @@ class UserDAL {
     return this;
   }
 
-  async getOne(id) {
+  static async getOne(id) {
     const user = await UserModel.findByPk(id);
 
-    if (!user)
+    if (!user) {
       throw new APIError(
         {
           name: 'user_not_found',
           httpCode: 404,
           details: [`User with id ${id} cannot be found`],
         },
-        true
+        true,
       );
+    }
     return user.toResponse(user);
   }
 
-  async getAll() {
+  static async getAll() {
     const users = await UserModel.findAll();
 
-    return users.map(user => user.toResponse(user));
+    return users.map((user) => user.toResponse(user));
   }
 
-  async create(properties) {
+  static async create(properties) {
     const user = await UserModel.create({ ...properties });
 
     return user.toResponse(user);
   }
 
-  async update(id, properties) {
+  static async update(id, properties) {
     const user = await UserModel.findByPk(id);
 
-    if (!user)
+    if (!user) {
       throw new APIError(
         {
           name: 'user_not_found',
           httpCode: 404,
           details: [`User with id ${id} cannot be found and therefore wasn't updated`],
         },
-        true
+        true,
       );
+    }
 
     Object.entries(properties).forEach(([key, value]) => {
       user[key] = value;
@@ -58,18 +60,19 @@ class UserDAL {
     await user.save();
   }
 
-  async delete(id) {
+  static async delete(id) {
     const user = await UserModel.findByPk(id);
 
-    if (!user)
+    if (!user) {
       throw new APIError(
         {
           name: 'user_not_found',
           httpCode: 404,
           details: [`User with id ${id} cannot be found and therefore wasn't deleted`],
         },
-        true
+        true,
       );
+    }
     await user.destroy();
   }
 }

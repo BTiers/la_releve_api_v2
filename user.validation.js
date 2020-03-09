@@ -1,19 +1,10 @@
 import Joi from '@hapi/joi';
 
-import { identifier } from './common.validation.js';
-import APIError from './APIError.js';
+import { identifier } from './common.validation';
+import APIError from './APIError';
 
 class UserValidation {
-  constructor() {
-    if (!!UserValidation.instance) {
-      return UserValidation.instance;
-    }
-
-    UserValidation.instance = this;
-    return this;
-  }
-
-  async getOne(req, _, next) {
+  static async getOne(req, _, next) {
     const { id } = req.params;
 
     try {
@@ -28,25 +19,19 @@ class UserValidation {
     }
   }
 
-  async getAll(_, __, next) {
+  static async getAll(_, __, next) {
     next();
   }
 
-  async post(req, _, next) {
+  static async post(req, _, next) {
     const postSchema = Joi.object({
-      first_name: Joi.string()
-        .alphanum()
-        .required(),
-      last_name: Joi.string()
-        .alphanum()
-        .required(),
+      first_name: Joi.string().required(),
+      last_name: Joi.string().required(),
       email: Joi.string()
         .email()
         .required(),
       phone: Joi.string().required(),
-      last_school: Joi.string()
-        .alphanum()
-        .required(),
+      last_school: Joi.string().required(),
       study_level: Joi.string().required(),
     }).options({ abortEarly: false });
 
@@ -63,20 +48,17 @@ class UserValidation {
     }
   }
 
-  async put(req, _, next) {
+  static async put(req, _, next) {
     const putSchema = Joi.object({
       first_name: Joi.string()
-        .alphanum()
         .required(),
       last_name: Joi.string()
-        .alphanum()
         .required(),
       email: Joi.string()
         .email()
         .required(),
       phone: Joi.string().required(),
       last_school: Joi.string()
-        .alphanum()
         .required(),
       study_level: Joi.string().required(),
     }).options({ abortEarly: false });
@@ -96,13 +78,13 @@ class UserValidation {
     }
   }
 
-  async patch(req, _, next) {
+  static async patch(req, _, next) {
     const patchSchema = Joi.object({
-      first_name: Joi.string().alphanum(),
-      last_name: Joi.string().alphanum(),
+      first_name: Joi.string(),
+      last_name: Joi.string(),
       email: Joi.string().email(),
       phone: Joi.string(),
-      last_school: Joi.string().alphanum(),
+      last_school: Joi.string(),
       study_level: Joi.string(),
     }).or('first_name', 'last_name', 'email', 'phone', 'last_school', 'study_level');
 
@@ -121,7 +103,7 @@ class UserValidation {
     }
   }
 
-  async delete(req, _, next) {
+  static async delete(req, _, next) {
     const { id } = req.params;
 
     try {

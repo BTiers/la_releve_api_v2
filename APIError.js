@@ -4,7 +4,7 @@
 class APIError extends Error {
   constructor(
     { name = 'internal', httpCode = 500, details = ['Something went wrong on our side'] } = {},
-    isOperational = false
+    isOperational = false,
   ) {
     super(name);
     this.name = name;
@@ -16,7 +16,7 @@ class APIError extends Error {
   fromJoi(validationError) {
     this.name = 'validation';
     this.httpCode = 400;
-    this.details = validationError.details.map(detail => detail.message);
+    this.details = validationError.details.map((detail) => detail.message);
     this.isOperational = true;
   }
 
