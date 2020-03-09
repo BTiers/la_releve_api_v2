@@ -10,6 +10,7 @@ class UserController {
     this.getAll = this.getAll.bind(this);
     this.post = this.post.bind(this);
     this.put = this.put.bind(this);
+    this.patch = this.patch.bind(this);
     this.delete = this.delete.bind(this);
 
     UserController.instance = this;

@@ -2,6 +2,8 @@ import request from 'supertest';
 import server from './server';
 
 describe('All CRUD enpoints', () => {
+  /* User creation */
+
   it('should create a new user', async () => {
     const res = await request(server)
       .post('/api/v1/users')
@@ -45,5 +47,76 @@ describe('All CRUD enpoints', () => {
         details: ['"first_name" is required'],
       })
     );
+  });
+
+  /* User PUT updates */
+
+  it('should update the new user', async () => {
+    const beforeUpdate = await request(server)
+      .get('/api/v1/users')
+      .send({});
+
+    expect(beforeUpdate.statusCode).toEqual(200);
+
+    const { id } = beforeUpdate.body[0];
+    const updatePayload = {
+      first_name: 'Antoine',
+      last_name: 'Piche',
+      email: 'antoine-piche@la-releve.com',
+      phone: '0630303030',
+      last_school: 'Nesaispas',
+      study_level: 'BAC +5',
+    };
+
+    const res = await request(server)
+      .put(`/api/v1/users/${id}`)
+      .send(updatePayload);
+    
+    expect(res.statusCode).toEqual(204);
+    expect(res.body).toEqual(expect.objectContaining({}));
+
+    const afterUpdate = await request(server)
+      .get(`/api/v1/users/${id}`)
+      .send({});
+
+    expect(afterUpdate.statusCode).toEqual(200);
+    expect(afterUpdate.body).toEqual(expect.objectContaining({
+      first_name: 'Antoine',
+      last_name: 'Piche',
+      email: 'antoine-piche@la-releve.com',
+      last_school: 'Nesaispas',
+      study_level: 'BAC +5',
+      id
+    }));
+  });
+
+  it('should fail updating the new user', async () => {
+    const beforeUpdate = await request(server)
+      .get('/api/v1/users')
+      .send({});
+
+    expect(beforeUpdate.statusCode).toEqual(200);
+
+    const { id } = beforeUpdate.body[0];
+    const updatePayload = {
+      email: 'antoine-piche@la-releve.com',
+      phone: '0630303030',
+      last_school: 'Nesaispas',
+      study_level: 'BAC +5',
+    };
+
+    const res = await request(server)
+      .put(`/api/v1/users/${id}`)
+      .send(updatePayload);
+    
+    expect(res.statusCode).toEqual(400);
+    expect(res.body).toEqual(expect.objectContaining({
+      code: 'validation',
+      details: [
+        '"first_name" is required',
+        '"last_name" is required',
+      ],
+      httpCode: 400
+    }));
   });
 });

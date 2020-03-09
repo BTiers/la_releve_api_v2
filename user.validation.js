@@ -79,7 +79,7 @@ class UserValidation {
         .alphanum()
         .required(),
       study_level: Joi.string().required(),
-    });
+    }).options({ abortEarly: false });
 
     const { id } = req.params;
     const { body } = req;
